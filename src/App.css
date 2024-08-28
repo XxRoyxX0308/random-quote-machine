@@ -15,8 +15,15 @@
   padding: 40px 50px;
 }
 
+.fake-element{
+  visibility: hidden;
+  position: absolute;
+  top: -9999px;
+}
+
 .text{
-  transition: opacity .5s;
+  width: 450px;
+  transition: opacity .5s, height 1s;
 }
 
 .quote{
@@ -52,7 +59,7 @@
   border: none;
   border-radius: 4px;
   margin-right: 5px;
-  padding: 11px 10px;
+  padding: 10px 10px;
   color: #fff;
   text-align: center;
   font-size: 0.9rem;
@@ -80,7 +87,7 @@
   opacity: 0.4;
 }
 
-#new-quote{
+.submit-btn{
   width: 100px;
   margin: 0;
 }

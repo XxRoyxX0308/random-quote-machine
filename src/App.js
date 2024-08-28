@@ -1,5 +1,5 @@
 import './App.css';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTwitter, faTumblr } from '@fortawesome/free-brands-svg-icons'
 import { faQuoteLeft } from '@fortawesome/free-solid-svg-icons'
@@ -10,12 +10,19 @@ function App() {
   const [error, setError] = useState(null);
 
   const [quote, setQuote] = useState({});
+  const [fakeQuote, setFakeQuote] = useState({});
+
   const [backgroundColor, setBackgroundColor] = useState({backgroundColor: `#333333`});
   const [color, setColor] = useState({color: `#333333`});
-  const [fade, setFade] = useState({});
-
-
+  const [fadeTransition, setFadeTransition] = useState({});
+  const [heightTransition, setHeightTransition] = useState({});
   
+  const fakeAppRef = useRef(null);
+  const fakeHeight = useRef(0);
+  const isMoreHeight = useRef(true);
+
+
+
   useEffect(() => {
     fetch('https://gist.githubusercontent.com/camperbot/5a022b72e96c4c9585c32bf6a75f62d9/raw/e3c6895ce42069f0ee7e991229064f167fe8ccdc/quotes.json')
       .then((response) => response.json())
@@ -31,17 +38,28 @@ function App() {
       });
   }, []);
 
+  useEffect(() => {
+    const currentTextHeight = fakeAppRef.current.scrollHeight;
+    
+    isMoreHeight.current = currentTextHeight >= fakeHeight.current;
+    if(currentTextHeight > fakeHeight.current) setHeightTransition({height: currentTextHeight});
+    fakeHeight.current = currentTextHeight;
+  }, [fakeQuote]);
+
 
 
   const getQuote = (quotesDataCp = quotesData) => {
-    const r1 = Math.floor(Math.random() * 256), r2 = Math.floor(Math.random() * 256), r3 = Math.floor(Math.random() * 256);
+    const currentQuote = quotesDataCp[Math.floor(Math.random() * quotesDataCp.length)], r1 = Math.floor(Math.random() * 256), r2 = Math.floor(Math.random() * 256), r3 = Math.floor(Math.random() * 256);
+    
+    setFakeQuote(currentQuote);
     setBackgroundColor({backgroundColor: `rgb(${r1}, ${r2}, ${r3})`});
-    setFade({opacity: 0});
+    setFadeTransition({opacity: 0});
 
     setTimeout(() => {
-      setQuote(quotesDataCp[Math.floor(Math.random() * quotesDataCp.length)]);
+      setQuote(currentQuote);
       setColor({color: `rgb(${r1}, ${r2}, ${r3})`});
-      setFade({opacity: 1});
+      setFadeTransition({opacity: 1});
+      if(!isMoreHeight.current) setHeightTransition({height: fakeHeight.current});
     }, 500);
   };
 
@@ -63,7 +81,18 @@ function App() {
   return (
     <div className='app' style={{...backgroundColor, ...color}}>
       <div id='quote-box' className='app-container'>
-        <div className='text' style={fade}>
+
+        <div className='text fake-element' ref={fakeAppRef}>
+          <div className='quote'>
+            <FontAwesomeIcon icon={faQuoteLeft}/>
+            <span className='quote-text'>{fakeQuote.quote}</span>
+          </div>
+          <div className='author'>
+            <span>{fakeQuote.author}</span>
+          </div>
+        </div>
+        
+        <div className='text' style={{...fadeTransition, ...heightTransition}}>
           <div className='quote'>
             <FontAwesomeIcon icon={faQuoteLeft}/>
             <span id='text' className='quote-text'>{quote.quote}</span>
@@ -72,6 +101,7 @@ function App() {
             <span id='author'>{quote.author}</span>
           </div>
         </div>
+        
         <div className='button-bar'>
           <div>
             <a id='tweet-quote' className='button' style={backgroundColor} onMouseEnter={diffusionAnimation} onMouseLeave={diffusionAnimation} href={`https://twitter.com/intent/tweet?hashtags=quotes&related=freecodecamp&text=${encodeURIComponent(`"${quote.quote}" ${quote.author}`)}`} target='_blank' rel="noreferrer noopenner">
@@ -81,7 +111,7 @@ function App() {
               <FontAwesomeIcon icon={faTumblr} size='lg'/>
             </a>
           </div>
-          <button id='new-quote' className='button' style={backgroundColor} onMouseEnter={diffusionAnimation} onMouseLeave={diffusionAnimation} onClick={() => {getQuote();}}>New quote</button>
+          <button id='new-quote' className='button submit-btn' style={backgroundColor} onMouseEnter={diffusionAnimation} onMouseLeave={diffusionAnimation} onClick={() => {getQuote();}}>New quote</button>
         </div>
       </div>
       <a className='app-author' style={{color: '#fff'}} href='https://github.com/XxRoyxX0308' target='_blank' rel="noreferrer noopenner">by roy</a>

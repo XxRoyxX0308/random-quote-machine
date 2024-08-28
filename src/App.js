@@ -6,7 +6,6 @@ import { faQuoteLeft } from '@fortawesome/free-solid-svg-icons'
   
 function App() {
   const [quotesData, setQuotesData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const [quote, setQuote] = useState({});
@@ -32,9 +31,6 @@ function App() {
       })
       .catch((error) => {
         setError(error);
-      })
-      .finally(() => {
-        setLoading(false);
       });
   }, []);
 
@@ -95,10 +91,10 @@ function App() {
         <div className='text' style={{...fadeTransition, ...heightTransition}}>
           <div className='quote'>
             <FontAwesomeIcon icon={faQuoteLeft}/>
-            <span id='text' className='quote-text'>{quote.quote}</span>
+            <span id='text' className='quote-text'>{quote.quote ? quote.quote : "Loading..."}</span>
           </div>
           <div className='author'>
-            <span id='author'>{quote.author}</span>
+            <span id='author'>{quote.author ? quote.author : "Roy"}</span>
           </div>
         </div>
         

@@ -76,9 +76,9 @@ function App() {
 
   return (
     <div className='app' style={{...backgroundColor, ...color}}>
-      <div id='quote-box' className='app-container'>
 
-        <div className='text fake-element' ref={fakeAppRef}>
+      <div className='app-container fake-element'>
+        <div className='text' ref={fakeAppRef}>
           <div className='quote'>
             <FontAwesomeIcon icon={faQuoteLeft}/>
             <span className='quote-text'>{fakeQuote.quote}</span>
@@ -87,7 +87,9 @@ function App() {
             <span>{fakeQuote.author}</span>
           </div>
         </div>
-        
+      </div>
+      
+      <div id='quote-box' className='app-container'>
         <div className='text' style={{...fadeTransition, ...heightTransition}}>
           <div className='quote'>
             <FontAwesomeIcon icon={faQuoteLeft}/>
